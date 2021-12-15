@@ -1,0 +1,530 @@
+# QAP 5-One Stop Insurance Company
+# Code written by Tyler Engle
+# Last updated 14:30 on Dec 15 '21
+
+# all inputs - DONE
+# all calculated values - DONE
+# display all of both in a receipt - DONE
+# save policy number, inputs, and total premium to new data file(Policies.dat) - DONE
+# increment policy number by 1 - DONE
+# display message "Policy processed and saved" - DONE
+# allow user to make multiple policies then write to file once program ends - DONE
+# read policies and display them in reports
+# create accumulators and counters - DONE
+# (BONUS CONTENT)
+# add customer initials to end of policy number(####-XX) - DONE
+# set policy date as current date - DONE
+# first monthly payment date will be date of next month
+# if after the 25th will be following month
+# display values with printed results
+# add policy date to data file after the policy number
+
+# imported modules
+import datetime
+
+
+# pull constants from the datafile OSICDef.dat
+with open('OSICDef.dat', 'r') as f:
+# Reads values from datafile OSICDef.dat
+# Display them then as constants in this
+# program, QAP5
+    NEXT_POLICY_NUMBER = int(f.readline())
+    BASIC_PREMIUM = float(f.readline())
+    ADDITIONAL_CAR_DISCOUNT_RATE = float(f.readline())
+    EXTRA_LIABILITY_COVERAGE_COST = float(f.readline())
+    GLASS_COVERAGE_COST = float(f.readline())
+    LOANER_CAR_COVERAGE_COST = float(f.readline())
+    HST_RATE = float(f.readline())
+    PROCESSING_FEE = float(f.readline())
+
+# additional constants
+    ADDITIONAL_PREMIUM = BASIC_PREMIUM * ADDITIONAL_CAR_DISCOUNT_RATE
+
+
+# while loop to potentially loop whole program
+while True:
+# inputs start here - validate afterwards if there is time
+# customer inputs
+# if any inputs are blank it will mess up program
+# when we try to haul the index number from appended datafile
+
+# customer first name input and validation
+# while loop and if statement
+    while True:
+        Customer_First = input("Customer first name: ")
+        if Customer_First == "":
+            print("Invalid  input - cannot be blank")
+            continue
+        else:
+            Customer_First = Customer_First.title()
+            break
+
+# customer last name input and verification
+# while loop and if statement
+    while True:
+        Customer_Last = input("Customer last name: ")
+        if Customer_Last == "":
+            print("Invalid  input - cannot be blank")
+            continue
+        else:
+            Customer_Last = Customer_Last.title()
+            break
+
+# customer street address input and verification
+# while loop and if statement
+    while True:
+        Customer_Street = input("Customer street address: ")
+        if Customer_Street == "":
+            print("Invalid  input - cannot be blank")
+            continue
+        else:
+            Customer_Street = Customer_Street.title()
+            break
+
+# customer city input and verification
+# while loop and if statement
+    while True:
+        Customer_City = input("Customer city of residence: ")
+        if Customer_City == "":
+            print("Invalid  input - cannot be blank")
+            continue
+        else:
+            Customer_City = Customer_City.title()
+            break
+
+# customer province input and verification
+# while loop and if statement
+    while True:
+        Customer_Province = input("Customer province of residence[ex NL AB BC: ")
+        if Customer_Province == "":
+            print("Invalid  input - cannot be blank")
+            continue
+        else:
+            Customer_Province = Customer_Province.upper()
+            break
+
+# customer postal code input and verification
+# while loop and if statement
+    while True:
+# character set for letters number set for numbers
+        AllowedChar = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ\
+        abcdefghijklmnopqrstuvwxyz")
+        AllowedNum = set("1234567890")
+        Customer_Postal_Code = input("Customer postal code[no space]: ")
+        if len(Customer_Postal_Code) != 6:
+            print("Invalid input - not 6 characters")
+        elif Customer_Postal_Code == "" or \
+                set(Customer_Postal_Code[0]).issubset(AllowedChar) is False or \
+                set(Customer_Postal_Code[2]).issubset(AllowedChar) is False or \
+                set(Customer_Postal_Code[4]).issubset(AllowedChar) is False or \
+                set(Customer_Postal_Code[1]).issubset(AllowedNum) is False or \
+                set(Customer_Postal_Code[3]).issubset(AllowedNum) is False or \
+                set(Customer_Postal_Code[5]).issubset(AllowedNum) is False:
+            print("Invalid input - format incorrect")
+        else:
+            Customer_Postal_Code = Customer_Postal_Code.upper()
+            Customer_Postal_Code = Customer_Postal_Code[0:3]\
+                + " " + Customer_Postal_Code[3:6]
+            break
+
+# customer phone number input and verification
+# while loop and if statement and try statement
+    while True:
+        Customer_Phone = input("Customer phone number: ")
+        if Customer_Phone == "":
+            print("Invalid input - cannot be blank")
+            continue
+        elif len(Customer_Phone) != 10:
+            print("Invalid input - must be 10 characters")
+            continue
+        try:
+            Customer_Phone = int(Customer_Phone)
+        except:
+            print("Invalid input - must be integer")
+            continue
+        else:
+            Customer_Phone = str(Customer_Phone)
+            break
+
+# number of cars customer is getting insured
+# one car is basic premium
+# each other automobile is 25% off basic premium
+# while loop and try statement
+    while True:
+        Number_Cars_Insured = input("Number of cars being insured: ")
+        try:
+            Number_Cars_Insured = int(Number_Cars_Insured)
+        except:
+            print("Invalid input - must be an integer")
+        if Number_Cars_Insured >= 11:
+            print("Invalid input - cannot exceed 15")
+        else:
+            break
+
+# whether customer is opting in to extra liability on insurance
+# while loop and if statement
+    while True:
+        Extra_Liability_Option = input("Extra liability on vehicles[y|n]: ")
+        Extra_Liability_Option = Extra_Liability_Option.upper()
+        if Extra_Liability_Option != "Y" and Extra_Liability_Option != "N":
+            print("Invalid input - must answer Y or N")
+        else:
+            break
+
+# whether customer is opting in to glass coverage on insurance
+# while loop and if statement
+    while True:
+        Glass_Coverage_Option = input("Extra glass coverage[y|n]: ")
+        Glass_Coverage_Option = Glass_Coverage_Option.upper()
+        if Glass_Coverage_Option != "Y" and Glass_Coverage_Option != "N":
+            print("Invalid input - must answer Y or N")
+        else:
+            break
+
+# whether customer is opting in to taking loaner car
+# while loop and if statement
+    while True:
+        Loaner_Car_Option = input("Loaner car[y|n]: ")
+        Loaner_Car_Option = Loaner_Car_Option.upper()
+        if Loaner_Car_Option != "Y" \
+                and Loaner_Car_Option != "N":
+            print("Invalid input - must answer Y or N")
+        else:
+            break
+
+# what option of payment the customer has chosen
+# while loop and if statement
+    while True:
+        Payment_Option = input("Pay in full or monthly[f|m]: ")
+        Payment_Option = Payment_Option.upper()
+        if Payment_Option != "F" and Payment_Option != "M":
+            print("Invalid input - must answer f or m")
+        else:
+            break
+
+# car insurance costs and processing
+# if statements for number of cars insured
+    Car_Premium_Total = 0
+    if Number_Cars_Insured == 1:
+        Car_Premium_Total = BASIC_PREMIUM
+    elif Number_Cars_Insured >= 2:
+        Car_Premium_Total = BASIC_PREMIUM\
+                               + ADDITIONAL_PREMIUM\
+                               * (Number_Cars_Insured - 1)
+
+# processing if statements for extra costs
+# extra liability processing into extra liability total
+# if statement
+    Extra_Liability_Total = 0
+    if Extra_Liability_Option == "Y":
+        Extra_Liability_Total = EXTRA_LIABILITY_COVERAGE_COST\
+            * Number_Cars_Insured
+    elif Extra_Liability_Option == "N":
+        Extra_Liability_Total = 0
+
+# glass coverage processing into total extra liability
+# if statement
+    Glass_Coverage_Total = 0
+    if Glass_Coverage_Option == "Y":
+        Glass_Coverage_Total = GLASS_COVERAGE_COST\
+            * Number_Cars_Insured
+    elif Glass_Coverage_Option == "N":
+        Glass_Coverage_Total = 0
+
+# loaner car processing into loaner car total
+# if statement
+    Loaner_Car_Total = 0
+    if Loaner_Car_Option == "Y":
+        Loaner_Car_Total = LOANER_CAR_COVERAGE_COST\
+            * Number_Cars_Insured
+    elif Loaner_Car_Option == "N":
+        Loaner_Car_Total = 0
+
+# calculations/processing for new variables
+# total extra costs processing
+    Extra_Cost_Total = Extra_Liability_Total\
+        + Glass_Coverage_Total\
+        + Loaner_Car_Total
+
+# total insurance premium processing
+    Total_Insurance_Premium = Car_Premium_Total\
+        + Extra_Cost_Total
+
+# taxes amount processing
+    Taxes = Total_Insurance_Premium * HST_RATE
+
+# total cost processing
+    Cost_Total = Total_Insurance_Premium + Taxes
+
+# monthly payment processing
+    Monthly_Payment = (Cost_Total + PROCESSING_FEE)/12
+
+
+# current date datetime object formatting
+    Today = datetime.datetime.now()
+    Today = Today.strftime("%d-%b-%y")
+
+# display processing
+# customer name display
+    Customer_Name = Customer_First + " " + Customer_Last
+
+# customer address display formatting/processing
+# address broken into two parts for better fitting
+    Customer_Street_City = Customer_Street + " "\
+        + Customer_City
+    Customer_Province_Postal = Customer_Province + " "\
+        + Customer_Postal_Code
+
+# full customer address for writing in policy datafile
+    Customer_Address_Full = Customer_Street_City + " "\
+        + Customer_Province_Postal
+
+# print statement starts here
+# display all inputs and calculated values
+    print()
+    print("\/\/"*11)
+    print()
+    print(" "*12, "ONE STOP INSURANCE")
+    print()
+# invoice date to be set up as current date in dd-Mon-yy format
+    print(f" INVOICE DATE: {Today}")
+# add customer first and last initial into policy number
+    print(f" POLICY NUMBER: {NEXT_POLICY_NUMBER}-"
+          f"{Customer_First[0]}{Customer_Last[0]}")
+    print()
+    print(" CUSTOMER DETAILS:")
+    print(" "*3, f"{Customer_Last}, {Customer_First}")
+    print(" "*3, f"{Customer_Street_City:<36}")
+    print(" "*3, f"{Customer_Province_Postal:<36}")
+    print(" "*3, f"{Customer_Phone:<36}")
+    print()
+    print(" INSURANCE DETAILS:")
+    print(" "*3, f"Number of cars insured:     \
+    {Number_Cars_Insured:>7}")
+    print(" "*3, f"Extra liability:            \
+    {Extra_Liability_Option:>7}")
+    print(" "*3, f"Glass coverage:             \
+    {Glass_Coverage_Option:>7}")
+    print(" "*3, f"Loaner car:                 \
+    {Loaner_Car_Option:>7}")
+    print(" "*3, f"Payment option:             \
+    {Payment_Option:>7}")
+    print()
+    print(" INSURANCE COSTS:")
+    print(" "*3, f"Liability total cost:     \
+    ${Extra_Liability_Total:>8,.2f}")
+    print(" "*3, f"Glass coverage total cost:\
+    ${Glass_Coverage_Total:>8,.2f}")
+    print(" "*3, f"Loaner total cost:        \
+    ${Loaner_Car_Total:>8,.2f}")
+    print(" "*32, "="*11)
+    print(" "*3, f"Total extra costs:        \
+    ${Extra_Cost_Total:>8,.2f}")
+    print(" "*3, f"Premium total cost:       \
+    ${Car_Premium_Total:>8,.2f}")
+    print(" "*3, f"Taxes:                    \
+    ${Taxes:>8,.2f}")
+    print(" "*3, f"Total cost:               \
+    ${Cost_Total:>8,.2f}")
+    if Payment_Option == "M":
+        print(" "*3, f"Monthly payment:      \
+        ${Monthly_Payment:>8,.2f}")
+    print("\/\/" * 11)
+
+# append values to Policies datafile
+# each policy should save on a new line
+# if no file exists will create one
+    f = open("Policies.dat", "a")
+    f.write("{}, ".format(str(NEXT_POLICY_NUMBER)))
+    f.write("{}, ".format(str(Customer_Name)))
+    f.write("{}, ".format(Customer_Address_Full))
+    f.write("{}, ".format(Customer_Phone))
+    f.write("{}, ".format(str(Number_Cars_Insured)))
+    f.write("{}, ".format(Extra_Liability_Option))
+    f.write("{}, ".format(Glass_Coverage_Option))
+    f.write("{}, ".format(Loaner_Car_Option))
+    f.write("{}, ".format(Payment_Option))
+    f.write("{}\n".format(str(Total_Insurance_Premium)))
+    f.close()
+
+    print("       **Policy processed and saved**")
+
+# prompt to ask user if they want to input another policy or end program
+    while True:
+        Invoice_Choice = input("Continue using program?[y|n]: ")
+        Invoice_Choice = Invoice_Choice.upper()
+        if Invoice_Choice != "Y" and Invoice_Choice != "N":
+            print("Invalid input - choice must be y or n")
+            continue
+        elif Invoice_Choice == "N":
+            NEXT_POLICY_NUMBER += 1
+            break
+        elif Invoice_Choice == "Y":
+            NEXT_POLICY_NUMBER += 1
+            break
+    if Invoice_Choice == "Y":
+        continue
+
+# write values back to OSICDef.dat datafile
+# usually only updates the next policy number to be used
+# unless one of the other constants has been changed in some way
+    with open('OSICDef.dat', 'w') as f:
+        f.write(f"{NEXT_POLICY_NUMBER}\n"
+                f"{BASIC_PREMIUM}\n"
+                f"{ADDITIONAL_CAR_DISCOUNT_RATE}\n"
+                f"{EXTRA_LIABILITY_COVERAGE_COST}\n"
+                f"{GLASS_COVERAGE_COST}\n"
+                f"{LOANER_CAR_COVERAGE_COST}\n"
+                f"{HST_RATE}\n{PROCESSING_FEE}\n")
+
+    if Invoice_Choice == "N":
+        print()
+
+# detailed policy listing report
+        print("/"*60)
+        print("ONE STOP INSURANCE COMPANY")
+        print(f"POLICY LISTING AS OF {Today}")
+        print(f"{'POLICY'}  {'CUSTOMER'}          {'INSURANCE'}      {'EXTRA'}       {'TOTAL'}")
+        print(f"{'NUMBER'}    {'NAME'}             {'PREMIUM'}       {'COSTS'}      {'PREMIUM'}")
+        print("="*60)
+# a policy counter to increment by 1 for each policy
+        Policy_Ctr = 0
+# insurance premium accumulator to total up all insurance premium costs
+        Insurance_Premium_Acc = 0
+# extra cost accumulator to total up all extra costs
+        Extra_Cost_Acc = 0
+# total premium accumulator to total up all total premiums
+        Total_Premium_Acc = 0
+
+# read values from Policies.dat datafile and input them into report
+        f = open("Policies.dat", "r")
+        for line in f:
+            data = line.split(",")
+            Policy_Number = data[0]
+            Customer_Name = data[1].strip()
+            Number_Cars_Insured = (int(data[4].strip()))
+            Extra_Liability_Option = data[5].strip()
+            Glass_Coverage_Option = data[6].strip()
+            Loaner_Car_Option = data[7].strip()
+            Car_Premium_Total = float(data[9].strip())
+# car insurance costs and processing
+# if statements for number of cars insured
+            # Car_Premium_Total = 0
+            if Number_Cars_Insured == 1:
+                Car_Premium_Total = BASIC_PREMIUM
+            elif Number_Cars_Insured >= 2:
+                Car_Premium_Total = BASIC_PREMIUM \
+                                    + ADDITIONAL_PREMIUM \
+                                    * (Number_Cars_Insured - 1)
+# processing if statements for extra costs
+# extra liability processing into extra liability total
+# if statement
+            Extra_Liability_Total = 0
+            if Extra_Liability_Option == "Y":
+                Extra_Liability_Total = EXTRA_LIABILITY_COVERAGE_COST \
+                                        * Number_Cars_Insured
+            elif Extra_Liability_Option == "N":
+                Extra_Liability_Total = 0
+# glass coverage processing into total extra liability
+# if statement
+            Glass_Coverage_Total = 0
+            if Glass_Coverage_Option == "Y":
+                Glass_Coverage_Total = GLASS_COVERAGE_COST \
+                                       * Number_Cars_Insured
+            elif Glass_Coverage_Option == "N":
+                Glass_Coverage_Total = 0
+# loaner car processing into loaner car total
+# if statement
+            Loaner_Car_Total = 0
+            if Loaner_Car_Option == "Y":
+                Loaner_Car_Total = LOANER_CAR_COVERAGE_COST \
+                                   * Number_Cars_Insured
+            elif Loaner_Car_Option == "N":
+                Loaner_Car_Total = 0
+# calculations/processing for new variables
+# total extra costs processing
+            Extra_Cost_Total = Extra_Liability_Total \
+                + Glass_Coverage_Total \
+                + Loaner_Car_Total
+# total insurance premium processing
+            Total_Insurance_Premium = Car_Premium_Total \
+                + Extra_Cost_Total
+            print("{} {:<20} ${:>8,.2f}   ${:>8,.2f}    ${:>8,.2f}"
+                  .format(Policy_Number, Customer_Name,
+                          Car_Premium_Total, Extra_Cost_Total,
+                          Total_Insurance_Premium))
+            Policy_Ctr += 1
+            Insurance_Premium_Acc += Car_Premium_Total
+            Extra_Cost_Acc += Extra_Cost_Total
+            Total_Premium_Acc += Total_Insurance_Premium
+        f.close()
+
+        print("="*60)
+        print(f"Total policies: {Policy_Ctr:>3}      "
+              f"${Insurance_Premium_Acc:>9,.2f}  "
+              f"${Extra_Cost_Acc:>9,.2f}   "
+              f"${Total_Premium_Acc:>9,.2f}")
+        print("/"*60)
+
+        print()
+        print()
+
+# monthly payment listing report
+# reports show up here if customer has chosen 'm' for payment option
+        print("/" * 66)
+        print("ONE STOP INSURANCE COMPANY")
+        print(f"MONTHLY PAYMENT LISTING AS OF {Today}")
+        print(f"{'POLICY'}  {'CUSTOMER'}          {'TOTAL'}                 {'TOTAL'}     {'MONTHLY'}")
+        print(f"{'NUMBER'}  {'NAME'}             {'PREMIUM'}      {'HST'}       {'COST'}      {'PAYMENT'}")
+        print("=" * 66)
+# a policy counter to increment by 1 for each policy
+        Policy_Ctr2 = 0
+# insurance premium accumulator to total up all insurance premium costs
+        Total_Premium_Acc2 = 0
+# extra cost accumulator to total up all extra costs
+        HST_Acc = 0
+# total premium accumulator to total up all total premiums
+        Total_Cost_Acc = 0
+        Monthly_Payment_Acc = 0
+
+# read values from Policies.dat datafile and import them into report
+        f = open("Policies.dat", "r")
+        for line in f:
+            data = line.split(",")
+            Policy_Number = data[0]
+            Customer_Name = data[1].strip()
+            payment_Option = data[8].strip()
+            Total_Insurance_Premium = (float(data[9].strip()))
+
+# taxes amount processing
+            Taxes = Total_Insurance_Premium * HST_RATE
+
+# total cost processing
+            Cost_Total = Total_Insurance_Premium + Taxes
+
+# monthly payment processing
+            Monthly_Payment = (Cost_Total + PROCESSING_FEE) / 12
+            if payment_Option == "M":
+                print("{} {:<20} "
+                      "${:>8,.2f}  "
+                      "${:>6,.2f}  "
+                      "${:>8,.2f}  "
+                      "${:>8,.2f}"
+                      .format(Policy_Number, Customer_Name,
+                              Total_Insurance_Premium, Taxes,
+                              Cost_Total, Monthly_Payment))
+                Policy_Ctr2 += 1
+                Total_Premium_Acc2 += Total_Insurance_Premium
+                HST_Acc += Taxes
+                Total_Cost_Acc += Cost_Total
+                Monthly_Payment_Acc += Monthly_Payment
+        f.close()
+
+        print("=" * 66)
+        print(f"Total policies:{Policy_Ctr2:>3}       "
+              f"${Total_Premium_Acc2:>9,.2f}"
+              f"${HST_Acc:>8,.2f} "
+              f"${Total_Cost_Acc:>9,.2f} "
+              f"${Monthly_Payment_Acc:>9,.2f}")
+        print("/" * 66)
+    break
