@@ -1,4 +1,7 @@
 # Sprint-Final-TylerEngle
+Semester 1 Software Development final project
+Written in Python
+
 QAP 5 assignment along with OSICDef.dat and Policies.dat datafile.
 
 OSICDef.dat holds all the default values for the constants used in the program.
