@@ -1,4 +1,8 @@
-Semester 1 Software Development final project
+Last edited: March 21, 2023 @ 9:30
+
+Written by: Tyler Engle
+
+Written for: One Stop Insurance Company; to better organize their system for customers and invoice outputs--Final QAP of Semester 1 Software Development, hosted by Keyin College
 
 Written in Python
 
